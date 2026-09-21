@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
@@ -20,6 +20,12 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+
+      - name: Recreate Android Project Structure
+        run: |
+          mv lib/main.dart /tmp/main.dart
+          flutter create --org com.sabt.app --project-name sabt_app .
+          mv /tmp/main.dart lib/main.dart
 
       - name: Get Dependencies
         run: flutter pub get
