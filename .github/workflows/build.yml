@@ -13,7 +13,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '17'
 
       - name: Setup Flutter
@@ -21,20 +21,16 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Recreate Android Project Structure
+      - name: Build Android App
         run: |
-          mv lib/main.dart /tmp/main.dart
+          mkdir /tmp/app_build
+          cd /tmp/app_build
           flutter create --org com.sabt.app --project-name sabt_app .
-          mv /tmp/main.dart lib/main.dart
-
-      - name: Get Dependencies
-        run: flutter pub get
-
-      - name: Build APK
-        run: flutter build apk --release
+          cp "$GITHUB_WORKSPACE/lib/main.dart" lib/main.dart
+          flutter build apk --release
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Sabt-App
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: /tmp/app_build/build/app/outputs/flutter-apk/app-release.apk
